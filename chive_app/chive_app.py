@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, request
-from flask_restful import Resource, Api
+from flask_restplus import Api, Resource
+
 
 app = Flask(__name__)
-api = Api(app)
+api = Api(app, version='1.0', title='CHIVE API', default='CHIVE', default_label='CHIVE namespace', description='CHIVE API is a simple API to GET DN information for objects in a Cisco ACI Fabric')
 
+
+# for now,
+# we will keep a local object that tracks all of the devices,
+# this will be replaced with backend storage(mongo)
 
 DEVICES = {}
 
@@ -18,7 +23,10 @@ def persist_data(obj):
     print "CURRENT DEVICE LIST IS {}".format(DEVICES)
 
 
+# Decorate your operation
+@api.route('/device')
 class getInventory(Resource):
+
     def post(self):
         global DEVICES
         print request.json
@@ -29,7 +37,6 @@ class getInventory(Resource):
         global DEVICES
         return DEVICES
 
-api.add_resource(getInventory, '/device')
-
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5000)
+
